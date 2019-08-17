@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Ina/CLionProjects/cf/ContinuedFraction.cpp
+cmath
+-
+iostream
+-
+ContinuedFraction.h
+C:/Users/Ina/CLionProjects/cf/ContinuedFraction.h
+
+C:/Users/Ina/CLionProjects/cf/ContinuedFraction.h
+iosfwd
+-
+
+C:/Users/Ina/CLionProjects/cf/main.cpp
+iostream
+-
+ContinuedFraction.h
+C:/Users/Ina/CLionProjects/cf/ContinuedFraction.h
+
