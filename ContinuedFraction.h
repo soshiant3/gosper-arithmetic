@@ -11,12 +11,15 @@ class ContinuedFraction {
 public:
     virtual const int next();
     virtual const bool has_next();
+    virtual ContinuedFraction* copy();
 
     // Operators:
     ContinuedFraction* operator + (ContinuedFraction &);
     ContinuedFraction* operator - (ContinuedFraction &);
     ContinuedFraction* operator / (ContinuedFraction &);
     ContinuedFraction* operator * (ContinuedFraction &);
+    bool operator == (int);
+    bool operator != (int);
     friend std::ostream& operator<< (std::ostream &out, ContinuedFraction &);
 };
 
@@ -26,6 +29,7 @@ public:
     Rational(int, int);
     const int next();
     const bool has_next();
+    Rational* copy();
 };
 
 class Transform : public ContinuedFraction {
@@ -42,11 +46,13 @@ private:
     bool has_term = false;
 public:
     MoebiusTransform(ContinuedFraction*, int, int, int, int);
+    ~MoebiusTransform();
     const bool must_feed();
     void consume();
     void consume(int next);
     const int next();
     const bool has_next();
+    MoebiusTransform* copy();
 };
 
 // f(x,y) = (ax + bxy + cy + d) / (ex + fxy + gy + h)
@@ -61,11 +67,13 @@ private:
     int choose_cfn();
 public:
     BivariateMoebiusTransform(ContinuedFraction* x, ContinuedFraction* y, int, int, int, int, int, int, int, int);
+    ~BivariateMoebiusTransform();
     const bool must_feed();
     void consume();
     void consume(int next);
     const int next();
     const bool has_next();
+    BivariateMoebiusTransform* copy();
 };
 
 #endif //CF_CONTINUEDFRACTION_H

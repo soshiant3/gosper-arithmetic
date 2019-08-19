@@ -15,13 +15,17 @@
 //BivariateMoebiusTransform multiply {0,1,0,0,
 //                                    0,0,0,1};
 
-MoebiusTransform::MoebiusTransform(ContinuedFraction* x, int a, int b, int c, int d) : x(x), a(a), b(b), c(c), d(d) {}
+MoebiusTransform::MoebiusTransform(ContinuedFraction* x, int a, int b, int c, int d) : x(x->copy()), a(a), b(b), c(c), d(d) {}
+
+MoebiusTransform::~MoebiusTransform() {
+    delete x;
+}
 
 const bool MoebiusTransform::must_feed() {
     if (c == 0 and d == 0) return false;
     if (c == 0 or d == 0) return true;
     else term = b / d;
-    if (term == (int) (a / c)) {
+    if (term == a / c) {
         temp = b;
         b = d;
         d = temp - d * term;
@@ -61,13 +65,22 @@ const bool MoebiusTransform::has_next() {
     return has_term;
 }
 
+MoebiusTransform* MoebiusTransform::copy() {
+    return new MoebiusTransform(x->copy(), a, b, c, d);
+}
+
 // BIVARIATE
 
 BivariateMoebiusTransform::BivariateMoebiusTransform(ContinuedFraction* x, ContinuedFraction* y, int a, int b, int c,
                                                      int d, int e, int f, int g, int h) : a(a), b(b), c(c), d(d), e(e),
                                                      f(f), g(g), h(h) {
-    this->cfn[0] = x;
-    this->cfn[1] = y;
+    this->cfn[0] = x->copy();
+    this->cfn[1] = y->copy();
+}
+
+BivariateMoebiusTransform::~BivariateMoebiusTransform() {
+    delete cfn[0];
+    delete cfn[1];
 }
 
 int BivariateMoebiusTransform::choose_cfn() {
@@ -171,8 +184,13 @@ const bool BivariateMoebiusTransform::has_next() {
     return has_term;
 }
 
+BivariateMoebiusTransform* BivariateMoebiusTransform::copy() {
+    return new BivariateMoebiusTransform(cfn[0], cfn[1], a, b, c, d, e, f, g, h);
+}
+
 const int ContinuedFraction::next() {}
 const bool ContinuedFraction::has_next() {}
+ContinuedFraction* ContinuedFraction::copy() {}
 void Transform::consume() {}
 const bool Transform::must_feed() {}
 void Transform::consume(int) {}
@@ -189,6 +207,16 @@ ContinuedFraction* ContinuedFraction::operator*(ContinuedFraction &cf) {
 ContinuedFraction* ContinuedFraction::operator/(ContinuedFraction &cf) {
     return new BivariateMoebiusTransform(this, &cf, 1, 0, 0, 0, 0, 0, 1, 0);
 }
+bool ContinuedFraction::operator==(int i) {
+    ContinuedFraction* c = copy();
+    if (c->has_next()) {
+        return i == c->next();
+    }
+    return false; // this cf resembles infinity.
+}
+bool ContinuedFraction::operator!=(int i) {
+    return ! (*this == i);
+}
 
 std::ostream& operator<<(std::ostream &out, ContinuedFraction &cf) {
     int convergents[100];
@@ -197,8 +225,8 @@ std::ostream& operator<<(std::ostream &out, ContinuedFraction &cf) {
         convergents[i++] = cf.next();
     }
     double val = convergents[--i];
-    for (; i >= 0; --i) {
-        val = convergents[i] + 1 / val;
+    while (i > 0) {
+        val = convergents[--i] + 1 / val;
     }
     return out << val;
 }
@@ -215,4 +243,8 @@ const int Rational::next() {
     num = denom;
     denom = temp % denom;
     return quotient;
+}
+
+Rational* Rational::copy() {
+    return new Rational(num, denom);
 }
