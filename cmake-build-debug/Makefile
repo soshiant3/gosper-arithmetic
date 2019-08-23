@@ -47,10 +47,10 @@ RM = "C:\Program Files\JetBrains\CLion 2019.2\bin\cmake\win\bin\cmake.exe" -E re
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\Ina\CLionProjects\cf
+CMAKE_SOURCE_DIR = C:\Users\Ina\CLionProjects\gosper_arithmetic
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\Ina\CLionProjects\cf\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\Ina\CLionProjects\gosper_arithmetic\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -79,9 +79,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Ina\CLionProjects\cf\cmake-build-debug\CMakeFiles C:\Users\Ina\CLionProjects\cf\cmake-build-debug\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Ina\CLionProjects\gosper_arithmetic\cmake-build-debug\CMakeFiles C:\Users\Ina\CLionProjects\gosper_arithmetic\cmake-build-debug\CMakeFiles\progress.marks
 	$(MAKE) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Ina\CLionProjects\cf\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\Ina\CLionProjects\gosper_arithmetic\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -149,6 +149,33 @@ ContinuedFraction.cpp.s:
 	$(MAKE) -f CMakeFiles\cf.dir\build.make CMakeFiles/cf.dir/ContinuedFraction.cpp.s
 .PHONY : ContinuedFraction.cpp.s
 
+IOConfig.obj: IOConfig.cpp.obj
+
+.PHONY : IOConfig.obj
+
+# target to build an object file
+IOConfig.cpp.obj:
+	$(MAKE) -f CMakeFiles\cf.dir\build.make CMakeFiles/cf.dir/IOConfig.cpp.obj
+.PHONY : IOConfig.cpp.obj
+
+IOConfig.i: IOConfig.cpp.i
+
+.PHONY : IOConfig.i
+
+# target to preprocess a source file
+IOConfig.cpp.i:
+	$(MAKE) -f CMakeFiles\cf.dir\build.make CMakeFiles/cf.dir/IOConfig.cpp.i
+.PHONY : IOConfig.cpp.i
+
+IOConfig.s: IOConfig.cpp.s
+
+.PHONY : IOConfig.s
+
+# target to generate assembly for a file
+IOConfig.cpp.s:
+	$(MAKE) -f CMakeFiles\cf.dir\build.make CMakeFiles/cf.dir/IOConfig.cpp.s
+.PHONY : IOConfig.cpp.s
+
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -188,6 +215,9 @@ help:
 	@echo ... ContinuedFraction.obj
 	@echo ... ContinuedFraction.i
 	@echo ... ContinuedFraction.s
+	@echo ... IOConfig.obj
+	@echo ... IOConfig.i
+	@echo ... IOConfig.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

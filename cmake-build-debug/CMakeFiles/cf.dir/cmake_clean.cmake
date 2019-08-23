@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/cf.dir/main.cpp.obj"
   "CMakeFiles/cf.dir/ContinuedFraction.cpp.obj"
+  "CMakeFiles/cf.dir/IOConfig.cpp.obj"
   "cf.pdb"
   "cf.exe"
   "cf.exe.manifest"

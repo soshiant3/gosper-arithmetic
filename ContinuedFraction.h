@@ -7,11 +7,14 @@
 
 #include <iosfwd>
 
+const int iterations = 1000;
+
 class ContinuedFraction {
 public:
     virtual const int next();
     virtual const bool has_next();
-    virtual ContinuedFraction* copy();
+    virtual ContinuedFraction* copy() const;
+    ContinuedFraction* abs();
 
     // Operators:
     ContinuedFraction* operator + (ContinuedFraction &);
@@ -20,6 +23,13 @@ public:
     ContinuedFraction* operator * (ContinuedFraction &);
     bool operator == (int);
     bool operator != (int);
+    bool operator == (ContinuedFraction &);
+    bool operator != (ContinuedFraction &);
+    bool operator < (ContinuedFraction &);
+    bool operator > (ContinuedFraction &);
+    bool operator < (int);
+    bool operator > (int);
+    operator int() const;
     friend std::ostream& operator<< (std::ostream &out, ContinuedFraction &);
 };
 
@@ -29,7 +39,17 @@ public:
     Rational(int, int);
     const int next();
     const bool has_next();
-    Rational* copy();
+    Rational* copy() const;
+};
+
+class Factory : public ContinuedFraction {
+    int n;
+    int (*next_fn)(int);
+public:
+    Factory(int (*)(int));
+    const int next();
+    const bool has_next();
+    Factory* copy() const;
 };
 
 class Transform : public ContinuedFraction {
@@ -52,7 +72,7 @@ public:
     void consume(int next);
     const int next();
     const bool has_next();
-    MoebiusTransform* copy();
+    MoebiusTransform* copy() const;
 };
 
 // f(x,y) = (ax + bxy + cy + d) / (ex + fxy + gy + h)
@@ -73,7 +93,7 @@ public:
     void consume(int next);
     const int next();
     const bool has_next();
-    BivariateMoebiusTransform* copy();
+    BivariateMoebiusTransform* copy() const;
 };
 
 #endif //CF_CONTINUEDFRACTION_H

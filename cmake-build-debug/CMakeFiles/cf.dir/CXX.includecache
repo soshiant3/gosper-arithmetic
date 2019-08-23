@@ -6,21 +6,17 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/Ina/CLionProjects/cf/ContinuedFraction.cpp
-cmath
--
-iostream
--
-ContinuedFraction.h
-C:/Users/Ina/CLionProjects/cf/ContinuedFraction.h
-
-C:/Users/Ina/CLionProjects/cf/ContinuedFraction.h
+C:/Users/Ina/CLionProjects/gosper_arithmetic/ContinuedFraction.h
 iosfwd
 -
 
-C:/Users/Ina/CLionProjects/cf/main.cpp
+C:/Users/Ina/CLionProjects/gosper_arithmetic/main.cpp
 iostream
 -
+math.h
+C:/Users/Ina/CLionProjects/gosper_arithmetic/math.h
 ContinuedFraction.h
-C:/Users/Ina/CLionProjects/cf/ContinuedFraction.h
+C:/Users/Ina/CLionProjects/gosper_arithmetic/ContinuedFraction.h
+time.h
+-
 

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include "ContinuedFraction.h"
+#include "IOConfig.cpp"
 
 //BivariateMoebiusTransform add {1,0,1,0,
 //                               0,0,0,1};
@@ -65,7 +66,7 @@ const bool MoebiusTransform::has_next() {
     return has_term;
 }
 
-MoebiusTransform* MoebiusTransform::copy() {
+MoebiusTransform* MoebiusTransform::copy() const {
     return new MoebiusTransform(x->copy(), a, b, c, d);
 }
 
@@ -131,7 +132,7 @@ void BivariateMoebiusTransform::consume() {
         d = a;
         c = b;
         h = e;
-        g = h;
+        g = f;
     } else {
         d = c;
         a = b;
@@ -184,16 +185,22 @@ const bool BivariateMoebiusTransform::has_next() {
     return has_term;
 }
 
-BivariateMoebiusTransform* BivariateMoebiusTransform::copy() {
+BivariateMoebiusTransform* BivariateMoebiusTransform::copy() const {
     return new BivariateMoebiusTransform(cfn[0], cfn[1], a, b, c, d, e, f, g, h);
 }
 
 const int ContinuedFraction::next() {}
 const bool ContinuedFraction::has_next() {}
-ContinuedFraction* ContinuedFraction::copy() {}
+ContinuedFraction* ContinuedFraction::copy() const {}
 void Transform::consume() {}
 const bool Transform::must_feed() {}
 void Transform::consume(int) {}
+
+ContinuedFraction* ContinuedFraction::abs() {
+    ContinuedFraction* a = copy();
+    if (!a->has_next()) return a;
+    return *this < 0 ? (delete a, new MoebiusTransform(this, -1, 0, 0, 1)) : a;
+}
 
 ContinuedFraction* ContinuedFraction::operator+(ContinuedFraction &cf) {
     return new BivariateMoebiusTransform(this, &cf, 1, 0, 1, 0, 0, 0, 0, 1);
@@ -210,25 +217,143 @@ ContinuedFraction* ContinuedFraction::operator/(ContinuedFraction &cf) {
 bool ContinuedFraction::operator==(int i) {
     ContinuedFraction* c = copy();
     if (c->has_next()) {
-        return i == c->next();
+        int next = c->next();
+        bool has_next = c->has_next();
+        delete c;
+        return i == next && !has_next;
     }
+    delete c;
     return false; // this cf resembles infinity.
 }
 bool ContinuedFraction::operator!=(int i) {
     return ! (*this == i);
 }
 
+bool ContinuedFraction::operator==(ContinuedFraction &cf) {
+    ContinuedFraction* a = copy();
+    ContinuedFraction* b = cf.copy();
+    for (int i = 0; i < iterations; i++) {
+        if (a->has_next() && b->has_next()) {
+            if (a->next() != b->next()) {
+                delete a;
+                delete b;
+                return false;
+            }
+        } else {
+            bool a_has_next = a->has_next(), b_has_next = b->has_next();
+            delete a;
+            delete b;
+            return !a_has_next && !b_has_next;
+        }
+    }
+    delete a;
+    delete b;
+    return true;
+}
+
+bool ContinuedFraction::operator!=(ContinuedFraction &cf) {
+    return ! (*this == cf);
+}
+
+bool ContinuedFraction::operator<(ContinuedFraction &cf) {
+    ContinuedFraction* a = copy();
+    ContinuedFraction* b = cf.copy();
+    for (int i = 0; i < iterations; i++) {
+        if (a->has_next() && b->has_next()) {
+            int a_next = a->next();
+            int b_next = b->next();
+            if (a_next < b_next) {
+                delete a;
+                delete b;
+                return i % 2 == 0;
+            } else if (a_next > b_next) {
+                delete a;
+                delete b;
+                return i % 2 != 0;
+            }
+        } else {
+            bool has_next = a->has_next();
+            delete a;
+            delete b;
+            return has_next ? i % 2 == 0 : i % 2 != 0;
+        }
+    }
+    delete a;
+    delete b;
+    return false;
+}
+
+bool ContinuedFraction::operator>(ContinuedFraction &cf) {
+    return cf < *this;
+}
+
+bool ContinuedFraction::operator<(int i) {
+    ContinuedFraction* a = copy();
+    if (!a->has_next()) {
+        delete a;
+        return false;
+    }
+    int next = a->next();
+    delete a;
+    return next < i;
+}
+
+bool ContinuedFraction::operator>(int i) {
+    ContinuedFraction* a = copy();
+    if (!a->has_next()) {
+        delete a;
+        return true;
+    }
+    int a_next = a->next();
+    bool has_next = a->has_next();
+    delete a;
+    return a_next > i || (has_next && a_next == i);
+}
+
 std::ostream& operator<<(std::ostream &out, ContinuedFraction &cf) {
-    int convergents[100];
-    int i = 0;
-    while (cf.has_next() && i < 100) {
-        convergents[i++] = cf.next();
+    ContinuedFraction* cf0 = cf.copy();
+    int P = 1, p = 0;
+    int Q = 0, q = 1;
+    int n = -1;
+    unsigned int err = 0;
+    bool komma = true;
+    bool step = false;
+    while (cf0->has_next() && (err < machine_eps || !step)) {
+        if (err >= machine_eps) step = true;
+        int next = cf0->next(), p_n = p, q_n = q;
+        p = P;
+        P = next * P + p_n;
+        q = Q;
+        Q = next * Q + q_n;
+        err = Q; // sqrt of the error.
+        n++;
     }
-    double val = convergents[--i];
-    while (i > 0) {
-        val = convergents[--i] + 1 / val;
+    if (!cf0->has_next()) {
+        delete cf0;
+        return Q == 1 ? out << P : (Q == 0 ? out << "inf" : out << P << "/" << Q);
     }
-    return out << val;
+    if (!decimal) {
+        delete cf0;
+        return n % 2 == 0 ? out << "[" << P << "/" << Q << ", " << p << "/" << q << "]" :
+               out << "[" << p << "/" << q << ", " << P << "/" << Q << "]";
+    }
+    int f;
+    while ((f = P / Q) == p / q) {
+        out << f;
+        if (komma) (out << ".", komma = false);
+        P -= f * Q;
+        p -= f * q;
+        P *= 10;
+        p *= 10;
+    }
+    return out;
+}
+
+ContinuedFraction::operator int() const {
+    ContinuedFraction* cf0 = copy();
+    int next = cf0->has_next() ? cf0->next() : 0;
+    delete cf0;
+    return next;
 }
 
 Rational::Rational(int num, int denom) : num(num), denom(denom) {}
@@ -245,6 +370,22 @@ const int Rational::next() {
     return quotient;
 }
 
-Rational* Rational::copy() {
+Rational* Rational::copy() const {
     return new Rational(num, denom);
+}
+
+Factory::Factory(int (*next_fn)(int)) : next_fn(next_fn), n(0) {}
+
+const bool Factory::has_next() {
+    return true;
+}
+
+const int Factory::next() {
+    return next_fn(n++);
+}
+
+Factory* Factory::copy() const {
+    Factory* fact = new Factory(next_fn);
+    fact->n = n;
+    return fact;
 }

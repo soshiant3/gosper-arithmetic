@@ -3,6 +3,9 @@
 
 CMakeFiles/cf.dir/ContinuedFraction.cpp.obj: ../ContinuedFraction.cpp
 CMakeFiles/cf.dir/ContinuedFraction.cpp.obj: ../ContinuedFraction.h
+CMakeFiles/cf.dir/ContinuedFraction.cpp.obj: ../IOConfig.cpp
+
+CMakeFiles/cf.dir/IOConfig.cpp.obj: ../IOConfig.cpp
 
 CMakeFiles/cf.dir/main.cpp.obj: ../ContinuedFraction.h
 CMakeFiles/cf.dir/main.cpp.obj: ../main.cpp

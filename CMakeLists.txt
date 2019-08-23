@@ -3,4 +3,4 @@ project(cf)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(cf main.cpp ContinuedFraction.cpp ContinuedFraction.h)
+add_executable(cf main.cpp ContinuedFraction.cpp ContinuedFraction.h IOConfig.cpp)
